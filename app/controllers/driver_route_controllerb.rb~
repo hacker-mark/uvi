@@ -1,0 +1,29 @@
+
+require 'json'
+require 'net/http'
+require 'uri'
+
+class DriverRouteController < ApplicationController
+    before_filter :subscribe, :only => :index
+    protect_from_forgery with: :null_session
+
+    def index
+
+        start = params["start"]
+        destination = params["destination"]
+        rider_start = params["rider_start"]
+        rider_destination = params["rider_end"]
+
+        url = "https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=AIzaSyCEmjPDs8Fcwj15njTIZjqgcjjIXsCA3wE" %[start, destination]
+
+        url = URI.parse(url)
+		request = Net::HTTP::Get.new(url.to_s)
+        response = Net::HTTP.start(url.host, url.port) {|http|
+            http.request(req)
+        }
+
+        render :json => JSON.parse(response)
+    end
+
+end
+
